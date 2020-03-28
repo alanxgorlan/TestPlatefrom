@@ -1,0 +1,17 @@
+<ul class="layui-nav" lay-filter="">
+  <li class="layui-nav-item"><a href="/">首页</a></li>
+  <li class="layui-nav-item">
+    <a href="javascript:;">接口测试</a>
+    <dl class="layui-nav-child"> <!-- 二级菜单 -->
+      <dd><a href="/interface/create">创建接口</a></dd>
+      <dd><a href="/interface/list">接口列表</a></dd>
+      <dd><a href="/interface/report">测试报告</a></dd>
+    </dl>
+  </li>
+</ul>
+
+<script>
+layui.use('element', function(){
+  var element = layui.element;
+});
+</script>
