@@ -1,4 +1,147 @@
 {% extends 'base.html' %}
+
+{% block style %}
+<link href="/interface/static/interface.css" rel="stylesheet"/>
+{% endblock %}
+
+
 {% block content %}
-<h1>创建接口</h1>
+<div class="layui-container">
+    <h1>创建接口</h1>
+<form class="layui-form">
+    <div class="layui-row">
+        <div class="layui-col-md6">
+            <div class="layui-row">
+                <div class="layui-col-md4">
+                    <select name="method" lay-verify="">
+                        <option value="get">get</option>
+                        <option value="post">post</option>
+                        <option value="put">put</option>
+                    </select>
+                </div>
+                <div class="layui-col-md6">
+                    <div class="layui-input-inline url">
+                        <input type="text"  required  lay-verify="required" placeholder="请输入请求url"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-row layui-col-space5">
+                <div class="layui-col-md2">
+                    <button id="header" type="button" class="layui-btn">header</button>
+                </div>
+                <div class="layui-col-md2">
+                    <button id="params" type="button" class="layui-btn">params</button>
+                </div>
+                <div class="layui-col-md2">
+                    <button id="assert" type="button" class="layui-btn">assert</button>
+                </div>
+                <div class="layui-col-md2">
+                    <button id="save" type="button" class="layui-btn">save</button>
+                </div>
+            </div>
+            <div id="header-section" style="display: none">
+                <fieldset class="layui-elem-field layui-field-title">
+                    <legend>头部域</legend>
+                </fieldset>
+            </div>
+            <div id="params-section" style="display: none">
+                <fieldset class="layui-elem-field layui-field-title">
+                    <legend>参数域</legend>
+                </fieldset>
+            </div>
+            <div id="assert-section" style="display: none">
+                <fieldset class="layui-elem-field layui-field-title">
+                    <legend>Assert</legend>
+                </fieldset>
+            </div>
+        </div>
+    </div>
+</form>
+</div>
+
+<script>
+
+function add_header(form) {
+    $("#header").click(function () {
+       var html = ""
+       html +=
+       '<div class="layui-row">' +
+        '<div class="layui-col-md6">' +
+           '<div class="layui-input-inline ">' +
+                '<input type="text" required  lay-verify="required" placeholder="头部域键" autocomplete="off" class="layui-input">' +
+           '</div>' +
+        '</div>' +
+        '<div class="layui-col-md6">' +
+            '<div class="layui-input-inline">' +
+                '<input type="text"  required  lay-verify="required" placeholder="头部域值" autocomplete="off" class="layui-input">' +
+            '</div>' +
+        '</div>' +
+       '</div>'
+        $("#header-section").append(html)
+        $("#header-section").show()
+    })
+}
+
+function add_params(form) {
+    $("#params").click(function () {
+       var html = ""
+       html +=
+       '<div class="layui-row">' +
+        '<div class="layui-col-md6">' +
+           '<div class="layui-input-inline ">' +
+                '<input type="text" required  lay-verify="required" placeholder="参数域键" autocomplete="off" class="layui-input">' +
+           '</div>' +
+        '</div>' +
+        '<div class="layui-col-md6">' +
+            '<div class="layui-input-inline">' +
+                '<input type="text"  required  lay-verify="required" placeholder="参数域值" autocomplete="off" class="layui-input">' +
+            '</div>' +
+        '</div>' +
+       '</div>'
+        $("#params-section").append(html)
+        $("#params-section").show()
+    })
+}
+
+
+function add_assert(form) {
+    $("#assert").click(function () {
+       var html = ""
+       html +=
+       '<div class="layui-row">' +
+        '<div class="layui-col-md4">' +
+           '<div class="layui-input-inline ">' +
+                '<input type="text" required  lay-verify="required" placeholder="提取表达式" autocomplete="off" class="layui-input">' +
+           '</div>' +
+        '</div>' +
+        '<div class="layui-col-md2">'+
+           '<select class="condition" lay-verify="">'+
+            '<option value="equal">等于</option>'+
+            '<option value="not_equal">不等于</option>'+
+            '<option value="greater">大于</option>'+
+            '<option value="not_less">大于等于</option>'+
+            '<option value="less">小于</option>'+
+            '<option value="not_greater">小于等于</option>'+
+           '</select>'+
+        '</div>'+
+        '<div class="layui-col-md4">' +
+            '<div class="layui-input-inline">' +
+                '<input type="text"  required  lay-verify="required" placeholder="预期值" autocomplete="off" class="layui-input">' +
+            '</div>' +
+        '</div>' +
+       '</div>'
+        $("#assert-section").append(html)
+        $("#assert-section").show()
+        form.render()
+    })
+}
+
+layui.use('form', function(){
+  var form = layui.form;
+    add_header(form)
+    add_params(form)
+    add_assert(form)
+});
+</script>
 {% endblock %}

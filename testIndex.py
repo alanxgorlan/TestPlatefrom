@@ -1,8 +1,8 @@
 
 from flask import Flask
-from interfaces import interface
-from flask import render_template
 
+from flask import render_template
+from interfaces import interface
 
 app = Flask(__name__)
 
