@@ -13,15 +13,16 @@
         <div class="layui-col-md6">
             <div class="layui-row">
                 <div class="layui-col-md4">
-                    <select name="method" lay-verify="">
+                    <select id="method" lay-verify="">
                         <option value="get">get</option>
                         <option value="post">post</option>
                         <option value="put">put</option>
+                        <option value="delete">delete</option>
                     </select>
                 </div>
                 <div class="layui-col-md6">
                     <div class="layui-input-inline url">
-                        <input type="text"  required  lay-verify="required" placeholder="请输入请求url"
+                        <input id="url" type="text"  required  lay-verify="required" placeholder="请输入请求url"
                                autocomplete="off" class="layui-input">
                     </div>
                 </div>
@@ -35,6 +36,12 @@
                 </div>
                 <div class="layui-col-md2">
                     <button id="assert" type="button" class="layui-btn">assert</button>
+                </div>
+                <div class="layui-col-md2">
+                    <button id="extract" type="button" class="layui-btn">extract</button>
+                </div>
+                <div class="layui-col-md2">
+                    <button id="debug" type="button" class="layui-btn">debug</button>
                 </div>
                 <div class="layui-col-md2">
                     <button id="save" type="button" class="layui-btn">save</button>
@@ -55,6 +62,11 @@
                     <legend>Assert</legend>
                 </fieldset>
             </div>
+            <div id="extract-section" style="display: none">
+                <fieldset class="layui-elem-field layui-field-title">
+                    <legend>提取</legend>
+                </fieldset>
+            </div>
         </div>
     </div>
 </form>
@@ -69,12 +81,12 @@ function add_header(form) {
        '<div class="layui-row">' +
         '<div class="layui-col-md6">' +
            '<div class="layui-input-inline ">' +
-                '<input type="text" required  lay-verify="required" placeholder="头部域键" autocomplete="off" class="layui-input">' +
+                '<input type="text" required  lay-verify="required" placeholder="头部域键" autocomplete="off" class="layui-input header-key">' +
            '</div>' +
         '</div>' +
         '<div class="layui-col-md6">' +
             '<div class="layui-input-inline">' +
-                '<input type="text"  required  lay-verify="required" placeholder="头部域值" autocomplete="off" class="layui-input">' +
+                '<input type="text"  required  lay-verify="required" placeholder="头部域值" autocomplete="off" class="layui-input header-value">' +
             '</div>' +
         '</div>' +
        '</div>'
@@ -90,12 +102,12 @@ function add_params(form) {
        '<div class="layui-row">' +
         '<div class="layui-col-md6">' +
            '<div class="layui-input-inline ">' +
-                '<input type="text" required  lay-verify="required" placeholder="参数域键" autocomplete="off" class="layui-input">' +
+                '<input type="text" required  lay-verify="required" placeholder="参数域键" autocomplete="off" class="layui-input params-key">' +
            '</div>' +
         '</div>' +
         '<div class="layui-col-md6">' +
             '<div class="layui-input-inline">' +
-                '<input type="text"  required  lay-verify="required" placeholder="参数域值" autocomplete="off" class="layui-input">' +
+                '<input type="text"  required  lay-verify="required" placeholder="参数域值" autocomplete="off" class="layui-input params-value">' +
             '</div>' +
         '</div>' +
        '</div>'
@@ -112,7 +124,7 @@ function add_assert(form) {
        '<div class="layui-row">' +
         '<div class="layui-col-md4">' +
            '<div class="layui-input-inline ">' +
-                '<input type="text" required  lay-verify="required" placeholder="提取表达式" autocomplete="off" class="layui-input">' +
+                '<input type="text" required  lay-verify="required" placeholder="提取表达式" autocomplete="off" class="layui-input assert-input">' +
            '</div>' +
         '</div>' +
         '<div class="layui-col-md2">'+
@@ -127,7 +139,7 @@ function add_assert(form) {
         '</div>'+
         '<div class="layui-col-md4">' +
             '<div class="layui-input-inline">' +
-                '<input type="text"  required  lay-verify="required" placeholder="预期值" autocomplete="off" class="layui-input">' +
+                '<input type="text"  required  lay-verify="required" placeholder="预期值" autocomplete="off" class="layui-input assert-except">' +
             '</div>' +
         '</div>' +
        '</div>'
@@ -137,11 +149,74 @@ function add_assert(form) {
     })
 }
 
+function add_extract(form) {
+    $("#extract").click(function () {
+       var html = ""
+       html +=
+       '<div class="layui-row">' +
+        '<div class="layui-col-md6">' +
+           '<div class="layui-input-inline ">' +
+                '<input type="text" required  lay-verify="required" placeholder="提取表达式" autocomplete="off" class="layui-input extract-key">' +
+           '</div>' +
+        '</div>' +
+        '<div class="layui-col-md6">' +
+            '<div class="layui-input-inline">' +
+                '<input type="text"  required  lay-verify="required" placeholder="变量名" autocomplete="off" class="layui-input extract-value">' +
+            '</div>' +
+        '</div>' +
+       '</div>'
+        $("#extract-section").append(html)
+        $("#extract-section").show()
+    })
+}
+
+function get_info() {
+    var url = "/interface/api/debug"
+    var data = {
+        'method' : $("#method").val(),
+        'url' : $("#url").val(),
+        'header' : {},
+        'params' : {},
+        'assert' : [],
+        'extract' : [],
+    }
+    $(".header-key").each(function(index, element){
+        var key = $(".header-key").eq(index).val()
+        var value = $(".header-value").eq(index).val()
+        data['header'][key] = value
+    })
+    $(".params-key").each(function(index, element){
+        var key = $(".params-key").eq(index).val()
+        var value = $(".params-value").eq(index).val()
+        data['params'][key] = value
+    })
+    $(".assert-input").each(function(index, element){
+        data['assert'].push(
+            {
+                'assert_input' : $(".assert-input").eq(index).val(),
+                'condition' : $(".condition").eq(index).val(),
+                'expected' : $(".assert-except").eq(index).val()
+            }
+        )
+    })
+    $(".extract-key").each(function(index, element){
+        data['extract'].push(
+            {
+                'extract_key' : $(".extract-key").eq(index).val(),
+                'eextract_value' : $(".extract-value").eq(index).val()
+            }
+        )
+    })
+    http(url, "post", data)
+}
+
 layui.use('form', function(){
   var form = layui.form;
     add_header(form)
     add_params(form)
     add_assert(form)
+    add_extract(form)
+    $("#debug").click(get_info)
 });
 </script>
 {% endblock %}
