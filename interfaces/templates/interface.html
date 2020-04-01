@@ -68,6 +68,9 @@
                 </fieldset>
             </div>
         </div>
+        <div class="layui-col-md6">
+            <div id="result"></div>
+        </div>
     </div>
 </form>
 </div>
@@ -207,7 +210,10 @@ function get_info() {
             }
         )
     })
-    http(url, "post", data)
+    http(url, "post", data, function(data) {
+        $('#result').append('<pre><code>' + JSON.stringify(data['data'], null, 4) +'</code></pre>')
+
+    })
 }
 
 layui.use('form', function(){
